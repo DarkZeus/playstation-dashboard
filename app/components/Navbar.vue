@@ -1,5 +1,5 @@
 <template>
-  <nav class="relative z-10 flex justify-between items-center p-6 text-2xl text-white">
+  <nav class="relative z-10 flex justify-between items-center p-6 text-4xl text-white">
     <div class="flex space-x-8">
       <a href="#" class="font-semibold hover:text-gray-300">Games</a>
       <a href="#" class="text-gray-400 hover:text-gray-300">Media</a>
@@ -25,11 +25,3 @@
     </div>
   </nav>
 </template>
-
-<script setup>
-// No script logic needed for now for this static navbar
-</script>
-
-<style scoped>
-/* Scoped styles for the navbar can go here if needed */
-</style> 
