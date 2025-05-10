@@ -6,9 +6,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   css: ['./app/assets/css/main.css'],
   components: false,
-  modules: [
-    'motion-v/nuxt'  
-  ],
+  modules: ['motion-v/nuxt', '@nuxt/image'],
 
   future: {
     compatibilityVersion: 4,

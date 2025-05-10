@@ -1,5 +1,11 @@
 <template>
   <div class="relative min-h-screen text-white">
+    <div v-if="showResolutionWarning" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+      <div class="bg-black/90 p-8 rounded-xl shadow-lg text-center max-w-md mx-auto">
+        <h2 class="text-2xl font-bold mb-4">Screen Too Small</h2>
+        <p class="text-lg">This dashboard is best viewed on screens at least 1280x720 pixels.<br />Please use a larger window or device.</p>
+      </div>
+    </div>
     <div class="absolute top-0 left-0 w-full h-full bg-black -z-30 pointer-events-none" aria-hidden="true"></div>
     
     <!-- Animated Background Image Layers for Crossfade -->
@@ -9,21 +15,37 @@
       :initial="{ opacity: 1 }"
       :animate="{ opacity: 0 }"
       :transition="{ duration: 0.7, ease: 'easeInOut' }"
-      class="fixed inset-0 bg-black bg-cover bg-center -z-20 min-h-screen"
-      :style="{ backgroundImage: `url(${prevBackgroundCover})` }"
+      class="fixed inset-0 -z-20 min-h-screen overflow-hidden"
       @motionend="onPrevBgFadeOut"
     >
-      &nbsp;
+      <NuxtImg 
+        :src="prevBackgroundCover"
+        class="absolute inset-0 w-full h-full object-cover"
+        alt=""
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+        :width="1920"
+        :height="1080"
+      />
     </Motion>
     <Motion as="div"
       :key="selectedGame?.backgroundCover"
       :initial="{ opacity: 0 }"
       :animate="{ opacity: 1 }"
       :transition="{ duration: 0.7, ease: 'easeInOut' }"
-      class="fixed inset-0 bg-black bg-cover bg-center -z-20 min-h-screen"
-      :style="{ backgroundImage: `url(${selectedGame?.backgroundCover})` }"
+      class="fixed inset-0 -z-20 min-h-screen overflow-hidden"
     >
-      &nbsp;
+      <NuxtImg 
+        :src="selectedGame?.backgroundCover"
+        class="absolute inset-0 w-full h-full object-cover"
+        alt=""
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+        :width="1920"
+        :height="1080"
+      />
     </Motion>
     <!-- Overlay Layer -->
     <div
@@ -31,7 +53,7 @@
     ></div>
 
     <!-- Foreground Content -->
-    <div class="relative z-0 flex flex-col min-h-screen">
+    <div class="relative z-0 flex flex-col min-h-screen @container">
       <Navbar />
       <main class="relative z-10 flex flex-col justify-end flex-grow pb-20">
         <GameCarousel :games="games" :selectedGameIndex="selectedGameIndex" @select-game="selectGame" />
@@ -42,8 +64,9 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
 import { Motion } from 'motion-v';
+import { NuxtImg } from '#components';
 import Navbar from '../components/Navbar.vue';
 import GameCarousel from '../components/GameCarousel.vue';
 import GameDetails from '../components/GameDetails.vue';
@@ -91,6 +114,22 @@ function onPrevBgFadeOut() {
 function selectGame(index) {
   selectedGameIndex.value = index;
 }
+
+const minWidth = 1280;
+const minHeight = 720;
+const showResolutionWarning = ref(false);
+
+function checkResolution() {
+  showResolutionWarning.value = window.innerWidth < minWidth || window.innerHeight < minHeight;
+}
+
+onMounted(() => {
+  checkResolution();
+  window.addEventListener('resize', checkResolution);
+});
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', checkResolution);
+});
 </script>
 
 <style scoped>
